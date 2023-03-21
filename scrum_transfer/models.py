@@ -59,7 +59,7 @@ class Backlog(models.Model):
     Модель для бэклогов.
     """
     backlog_id_cloud = models.CharField(verbose_name='ID Бэклога облака', max_length=20)
-    backlog_id_box = models.CharField(verbose_name='ID Бэклога коробки', max_length=20)
+    backlog_id_box = models.CharField(verbose_name='ID Бэклога коробки', max_length=20, blank=False, null=True)
     scrum_cloud_id = models.CharField(verbose_name='ID скрама в облаке', max_length=20)
     scrum_box_id = models.CharField(verbose_name='ID скрама в коробке', max_length=20)
 
@@ -94,7 +94,7 @@ class Epic(models.Model):
     scrum_cloud_id = models.CharField(verbose_name='ID скрама в облаке', max_length=20)
     scrum_box_id = models.CharField(verbose_name='ID скрама в коробке', max_length=20)
     epic_name = models.CharField(verbose_name='Название эпика', max_length=200)
-    epic_files = models.CharField(verbose_name='Файлы в эпике', max_length=350, blank=True, null=False)
+    epic_files = models.CharField(verbose_name='Файлы в эпике', max_length=350, blank=True, null=True)
 
     class Meta:
         ordering = ['-id']
@@ -108,8 +108,11 @@ class ScrumTask(models.Model):
     """
     task_id_cloud = models.CharField(verbose_name='ID задачи в облаке', max_length=20)
     task_id_box = models.CharField(verbose_name='ID задачи в коробке', max_length=20)
+    scrum_cloud_id = models.CharField(verbose_name='ID скрама в облаке', max_length=20)
+    scrum_box_id = models.CharField(verbose_name='ID скрама в коробке', max_length=20)
     stage_id_cloud = models.CharField(verbose_name='ID стадии задачи в облаке', max_length=20, blank=True, null=False)
     stage_id_box = models.CharField(verbose_name='ID стадии задачи в коробке', max_length=20, blank=True, null=False)
+    comments_count = models.IntegerField(verbose_name='Кол-во комментов', default=0)
 
     class Meta:
         ordering = ['-id']

@@ -103,12 +103,18 @@ class ScrumTaskAdmin(admin.ModelAdmin):
         'task_id_box',
         'stage_id_cloud',
         'stage_id_box',
+        'scrum_cloud_id',
+        'scrum_box_id',
+        'comments_count',
     ]
     list_display_links = [
         'task_id_cloud',
         'task_id_box',
         'stage_id_cloud',
         'stage_id_box',
+        'scrum_cloud_id',
+        'scrum_box_id',
+        'comments_count',
     ]
 
 
