@@ -108,8 +108,8 @@ class ScrumTask(models.Model):
     """
     task_id_cloud = models.CharField(verbose_name='ID задачи в облаке', max_length=20)
     task_id_box = models.CharField(verbose_name='ID задачи в коробке', max_length=20)
-    scrum_cloud_id = models.CharField(verbose_name='ID скрама в облаке', max_length=20)
-    scrum_box_id = models.CharField(verbose_name='ID скрама в коробке', max_length=20)
+    scrum_cloud_id = models.CharField(verbose_name='ID скрама в облаке', max_length=20, blank=True, null=False)
+    scrum_box_id = models.CharField(verbose_name='ID скрама в коробке', max_length=20, blank=True, null=False)
     stage_id_cloud = models.CharField(verbose_name='ID стадии задачи в облаке', max_length=20, blank=True, null=False)
     stage_id_box = models.CharField(verbose_name='ID стадии задачи в коробке', max_length=20, blank=True, null=False)
     comments_count = models.IntegerField(verbose_name='Кол-во комментов', default=0)
@@ -129,7 +129,7 @@ class TaskComment(models.Model):
     author_id_cloud = models.CharField(verbose_name='ID автора в облаке', max_length=20)
     author_id_box = models.CharField(verbose_name='ID автора в коробке', max_length=20)
     author_mail = models.CharField(verbose_name='EMAIL автора', max_length=100)
-    files_in_comments = models.CharField(verbose_name='Файлы в комментарие', max_length=350, blank=True, null=False)
+    files_in_comments = models.CharField(verbose_name='Файлы в комментарие', max_length=350, blank=True, null=True)
 
     class Meta:
         ordering = ['-id']
@@ -137,9 +137,9 @@ class TaskComment(models.Model):
         verbose_name_plural = 'Комментарии задач'
 
 
-class Kanban(models.Model):
+class KanbanStages(models.Model):
     """
-    Модель для канбанов спринта.
+    Модель для стадий канбанов для спринта спринта.
     """
     sprint_id_cloud = models.CharField(verbose_name='ID спринта в облаке', max_length=20, blank=True, null=False)
     sprint_id_box = models.CharField(verbose_name='ID спринта в коробке', max_length=20, blank=True, null=False)
@@ -148,5 +148,5 @@ class Kanban(models.Model):
 
     class Meta:
         ordering = ['-id']
-        verbose_name = 'Канбан'
-        verbose_name_plural = 'Канбан'
+        verbose_name = 'Стадия канбана'
+        verbose_name_plural = 'Стадии канбана'

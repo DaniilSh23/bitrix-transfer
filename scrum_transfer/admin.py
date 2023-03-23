@@ -1,5 +1,5 @@
 from django.contrib import admin
-from scrum_transfer.models import Settings, Kanban, TaskComment, ScrumTask, Epic, Sprint, Backlog, BitrixUsers, Scrums
+from scrum_transfer.models import Settings, KanbanStages, TaskComment, ScrumTask, Epic, Sprint, Backlog, BitrixUsers, Scrums
 
 
 @admin.register(Settings)
@@ -138,7 +138,7 @@ class TaskCommentAdmin(admin.ModelAdmin):
     ]
 
 
-@admin.register(Kanban)
+@admin.register(KanbanStages)
 class KanbanAdmin(admin.ModelAdmin):
     list_display = [
         'sprint_id_cloud',

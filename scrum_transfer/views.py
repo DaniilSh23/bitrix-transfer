@@ -262,7 +262,7 @@ class SprintTransfer(APIView):
                     sprint_id_cloud=j_sprint.get('id'),
                     defaults={
                         'sprint_id_cloud': j_sprint.get('id'),
-                        'sprint_id_box': create_sprint.get('result').get('name'),
+                        'sprint_id_box': create_sprint.get('result').get('id'),
                         'scrum_cloud_id': i_scrum.scrum_cloud_id,
                         'scrum_box_id': i_scrum.scrum_box_id,
                         'sprint_name': j_sprint.get('name'),
@@ -355,14 +355,6 @@ class EpicTransfer(APIView):
                 logger.success(f'\t\tУспешно создан эпик: {j_epic.get("name")}|Скрам: {i_scrum.scrum_title}')
         return HttpResponse('Запрос выполнен. Записанные в коробке эпики '
                             'соответствуют списку из раздела Эпики в админке', status=http.HTTPStatus.OK)
-
-
-class ScrumTasksTransfer(APIView):
-    """
-    Перенос из облака в коробку задач скрамов.
-    """
-    def get(self, request, format=None):
-        pass
 
 
 class ScrumTransferView(APIView):
@@ -571,35 +563,14 @@ class TestBtrxMethod(APIView):
         #     # 'EMAIL': 'd.shestakov@cfunalog.ru'
         # }
 
-        # # Получаем список задач Битрикса
-        # method = 'tasks.task.list'
-        # params = {
-        #     'filter': {
-        #         'GROUP_ID': 102,    # Для группы(скрама) с нужным ID
-        #     },
-        #     'start': 50,    # Выводить задачи, начиная с 51 записи(это для следующих 50)
-        # }
-
-        # # Получаем инфу о задачи скрама по её id == 235706
-        # method = 'tasks.api.scrum.task.get'
-        # params = {
-        #     'id': 239112,
-        # }
-
         # # Получаем доступные поля для ...
         # method = 'tasks.task.getFields'
         # params = {}
 
-        # # Получаем стадии канбана для спринта с ID ...
-        # method = 'tasks.api.scrum.kanban.getStages'
-        # params = {
-        #     'sprintId': 286,
-        # }
-
         # # Получаем бэклог скрама
         # method = 'tasks.api.scrum.backlog.get'
         # params = {
-        #     'id': 11,
+        #     'id': 28,
         # }
 
         # # Создаём бэклог скрама
@@ -621,14 +592,40 @@ class TestBtrxMethod(APIView):
         # method = 'tasks.api.scrum.sprint.list'
         # params = {
         #     'filter': {
-        #         'GROUP_ID': 102,
+        #         'GROUP_ID': 28,
         #     },
         # }
 
         # # Получаем спринт по ID
         # method = 'tasks.api.scrum.sprint.get'
         # params = {
-        #     'id': 286,
+        #     'id': 478,
+        # }
+
+        # # Получаем стадии канбана для спринта с ID ...
+        # method = 'tasks.api.scrum.kanban.getStages'
+        # params = {
+        #     'sprintId': 37,
+        # }
+
+        # # Создаём стадию канбана в спринте
+        # method = 'tasks.api.scrum.kanban.addStage'
+        # params = {
+        #     'fields': {
+        #         'sprintId': 37,
+        #         'name': 'TEST KABAN STAGE',
+        #         # sort: sort,
+        #         'type': 'NEW',  # NEW, WORK, FINISH
+        #         # color: color,
+        #     },
+        # }
+
+        # # Добавляем задачу в стадию канбана
+        # method = 'tasks.api.scrum.kanban.addTask'
+        # params = {
+        #     'sprintId': 37,
+        #     'taskId': 118,
+        #     'stageId': 48,
         # }
 
         # # Создаём спринт в скраме
@@ -671,7 +668,78 @@ class TestBtrxMethod(APIView):
         #     'id': 3,
         # }
 
-        method_rslt = bitra_cloud.call(method=method, params=params)
-        # method_rslt = bitra_box.call(method=method, params=params)
+        # # Создаём задачу в битриксе
+        # method = 'tasks.task.add'
+        # params = {
+        #     'fields': {
+        #                     'PARENT_ID': None, 'TITLE': 'Тест создания задачи',
+        #                     'DESCRIPTION': 'тестовое описание', 'MARK': None, 'PRIORITY': 1,
+        #                     'STATUS': 3, 'MULTITASK': 'N', 'NOT_VIEWED': 'N',
+        #                     'REPLICATE': 'N', 'GROUP_ID': 28, 'STAGE_ID': None,
+        #                     'CREATED_BY': 105, 'CREATED_DATE': "2023-03-13T15:53:31+03:00", 'RESPONSIBLE_ID': 105,
+        #                     'ACCOMPLICES': None, 'AUDITORS': None, 'CHANGED_BY': 105,
+        #                     'CHANGED_DATE': "2023-03-13T15:53:31+03:00", 'STATUS_CHANGED_BY': 105,
+        #                     'STATUS_CHANGED_DATE': "2023-03-13T15:53:31+03:00", 'CLOSED_BY': None,
+        #                     'CLOSED_DATE': None, 'ACTIVITY_DATE': "2023-03-14T15:42:26+03:00",
+        #                     'DATE_START': None, 'DEADLINE': None, 'ALLOW_CHANGE_DEADLINE': None,
+        #                     'ALLOW_TIME_TRACKING': None, 'TASK_CONTROL': None, 'ADD_IN_REPORT': None,
+        #                     'START_DATE_PLAN': None, 'END_DATE_PLAN': None, 'TIME_ESTIMATE': 0,
+        #                     'TIME_SPENT_IN_LOGS': None, 'MATCH_WORK_TIME': 'N',
+        #                     # 'FORUM_TOPIC_ID': 0, 'FORUM_ID': 0, 'SITE_ID': 0,
+        #                     'SUBORDINATE': 'N', 'FAVORITE': 'N',
+        #                     'EXCHANGE_MODIFIED': None, 'EXCHANGE_ID': None,
+        #                     'OUTLOOK_VERSION': 8, 'VIEWED_DATE': "2023-03-14T15:42:26+03:00", 'SORTING': None,
+        #                     'DURATION_PLAN': 0, 'DURATION_FACT': None, 'DURATION_TYPE': 'days',
+        #                     'IS_MUTED': 'N', 'IS_PINNED': 'N', 'IS_PINNED_IN_GROUP': 'N',
+        #                     'CHECKLIST': None, 'UF_CRM_TASK': None, 'UF_MAIL_MESSAGE': None,
+        #                 }
+        # }
+
+        # # Обновляем задачу в ключе скрама
+        # method = 'tasks.api.scrum.task.update'
+        # params = {
+        #     'id': 118,
+        #     'fields': {
+        #         "entityId": 35,
+        #         'storyPoints': 18,
+        #         'epicId': None,
+        #         "sort": 13,
+        #     }
+        # }
+
+        # # Получаем список задач Битрикса
+        # method = 'tasks.task.list'
+        # params = {
+        #     'filter': {
+        #         'GROUP_ID': 28,    # Для группы(скрама) с нужным ID
+        #     },
+        #     # 'start': 50,    # Выводить задачи, начиная с 50 записи(это для следующих 50)
+        # }
+
+        # # Получаем инфу о задачи скрама по её id == 118
+        # method = 'tasks.api.scrum.task.get'
+        # params = {
+        #     'id': 118,
+        # }
+
+        # Получаем комментарии к задаче
+        method = 'task.commentitem.getlist'
+        params = {
+            'TASKID': 118
+        }
+
+        # # Создание комментария к задаче
+        # method = 'task.commentitem.add'
+        # params = {
+        #     'TASKID': 118,
+        #     'FIELDS': {
+        #         'AUTHOR_ID': 105,
+        #         'POST_MESSAGE': "Тестовый текст комментария.",
+        #         # 'UF_FORUM_MESSAGE_DOC': ['список файлов с диска, для прикрепления вида ["n123", ...]'],
+        #     },
+        # }
+
+        # method_rslt = bitra_cloud.call(method=method, params=params)
+        method_rslt = bitra_box.call(method=method, params=params)
         print('=' * 10, f'РЕЗУЛЬТАТ МЕТОДА {method}', '=' * 10, f'\n\n{method_rslt}')
         return HttpResponse(f'{json.dumps(method_rslt, indent=4, ensure_ascii=False)}', status=http.HTTPStatus.OK)
