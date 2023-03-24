@@ -553,14 +553,14 @@ class TestBtrxMethod(APIView):
         # # Получаем пользователей группы (скрама)
         # method = 'sonet_group.user.get'
         # params = {
-        #     'ID': 102   # ID группы (скрама)
+        #     'ID': 28   # ID группы (скрама)
         # }
 
         # # Получаем детальную инфу о пользователе
         # method = 'user.get'
         # params = {
         #     # 'ID': 105,    # ID пользователя в битре
-        #     # 'EMAIL': 'd.shestakov@cfunalog.ru'
+        #     'EMAIL': 'd.shestakov@cfunalog.ru'
         # }
 
         # # Получаем доступные поля для ...
@@ -707,14 +707,14 @@ class TestBtrxMethod(APIView):
         #     }
         # }
 
-        # # Получаем список задач Битрикса
-        # method = 'tasks.task.list'
-        # params = {
-        #     'filter': {
-        #         'GROUP_ID': 28,    # Для группы(скрама) с нужным ID
-        #     },
-        #     # 'start': 50,    # Выводить задачи, начиная с 50 записи(это для следующих 50)
-        # }
+        # Получаем список задач Битрикса
+        method = 'tasks.task.list'
+        params = {
+            # 'filter': {
+            #     'GROUP_ID': 28,    # Для группы(скрама) с нужным ID
+            # },
+            # 'start': 50,    # Выводить задачи, начиная с 50 записи(это для следующих 50)
+        }
 
         # # Получаем инфу о задачи скрама по её id == 118
         # method = 'tasks.api.scrum.task.get'
@@ -722,11 +722,11 @@ class TestBtrxMethod(APIView):
         #     'id': 118,
         # }
 
-        # Получаем комментарии к задаче
-        method = 'task.commentitem.getlist'
-        params = {
-            'TASKID': 118
-        }
+        # # Получаем комментарии к задаче
+        # method = 'task.commentitem.getlist'
+        # params = {
+        #     'TASKID': 118
+        # }
 
         # # Создание комментария к задаче
         # method = 'task.commentitem.add'
@@ -739,7 +739,15 @@ class TestBtrxMethod(APIView):
         #     },
         # }
 
-        # method_rslt = bitra_cloud.call(method=method, params=params)
-        method_rslt = bitra_box.call(method=method, params=params)
+        # # Приглашаем в скрам пользователей (права можно проставить, после их вступления)
+        # method = 'sonet_group.user.invite'
+        # params = {
+        #     'GROUP_ID': 28,
+        #     'USER_ID': [105, 3],
+        #     'MESSAGE': f'Приглашаем Вас в проект:.... ЭТО ТЕСТОВОЕ ПРИГЛАШЕНИЕ, МНЕ НАДО ОТВЕТ НА ЗАПРОС ГЛЯНУТЬ'
+        # }
+
+        method_rslt = bitra_cloud.call(method=method, params=params)
+        # method_rslt = bitra_box.call(method=method, params=params)
         print('=' * 10, f'РЕЗУЛЬТАТ МЕТОДА {method}', '=' * 10, f'\n\n{method_rslt}')
         return HttpResponse(f'{json.dumps(method_rslt, indent=4, ensure_ascii=False)}', status=http.HTTPStatus.OK)

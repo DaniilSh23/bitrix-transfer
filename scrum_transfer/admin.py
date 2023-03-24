@@ -16,6 +16,7 @@ class ScrumsAdmin(admin.ModelAdmin):
         'scrum_title',
         'scrum_master_id_cloud',
         'scrum_master_id_box',
+        'is_archived',
     ]
     list_display_links = [
         'scrum_cloud_id',
@@ -24,6 +25,15 @@ class ScrumsAdmin(admin.ModelAdmin):
         'scrum_master_id_cloud',
         'scrum_master_id_box',
     ]
+    search_fields = [
+        'scrum_cloud_id',
+        'scrum_box_id',
+        'scrum_title',
+        'scrum_master_id_cloud',
+        'scrum_master_id_box',
+    ]
+    search_help_text = 'Поиск по всем полям в таблице'
+    list_editable = ['is_archived']
 
 
 @admin.register(BitrixUsers)
@@ -40,6 +50,13 @@ class BitrixUsersAdmin(admin.ModelAdmin):
         'email',
         'name',
     ]
+    search_fields = [
+        'user_id_cloud',
+        'user_id_box',
+        'email',
+        'name',
+    ]
+    search_help_text = 'Поиск по всем полям таблицы'
 
 
 @admin.register(Backlog)
@@ -53,6 +70,10 @@ class BacklogAdmin(admin.ModelAdmin):
     list_display_links = [
         'backlog_id_cloud',
         'backlog_id_box',
+        'scrum_cloud_id',
+        'scrum_box_id',
+    ]
+    list_filter = [
         'scrum_cloud_id',
         'scrum_box_id',
     ]
@@ -70,6 +91,11 @@ class SprintAdmin(admin.ModelAdmin):
     list_display_links = [
         'sprint_id_cloud',
         'sprint_id_box',
+        'scrum_cloud_id',
+        'scrum_box_id',
+        'sprint_name',
+    ]
+    list_filter = [
         'scrum_cloud_id',
         'scrum_box_id',
         'sprint_name',
@@ -94,6 +120,10 @@ class EpicAdmin(admin.ModelAdmin):
         'epic_name',
         'epic_files',
     ]
+    list_filter = [
+        'scrum_cloud_id',
+        'scrum_box_id',
+    ]
 
 
 @admin.register(ScrumTask)
@@ -116,6 +146,12 @@ class ScrumTaskAdmin(admin.ModelAdmin):
         'scrum_box_id',
         'comments_count',
     ]
+    list_filter = [
+        'stage_id_cloud',
+        'stage_id_box',
+        'scrum_cloud_id',
+        'scrum_box_id',
+    ]
 
 
 @admin.register(TaskComment)
@@ -136,6 +172,11 @@ class TaskCommentAdmin(admin.ModelAdmin):
         'author_mail',
         'files_in_comments',
     ]
+    list_filter = [
+        'author_id_cloud',
+        'author_id_box',
+        'author_mail',
+    ]
 
 
 @admin.register(KanbanStages)
@@ -151,4 +192,8 @@ class KanbanAdmin(admin.ModelAdmin):
         'sprint_id_box',
         'stages_id_cloud',
         'stages_id_box',
+    ]
+    list_filter = [
+        'sprint_id_cloud',
+        'sprint_id_box',
     ]

@@ -50,7 +50,7 @@ class Command(BaseCommand):
                 'TASKID': i_task.task_id_cloud
             }
             cloud_comments_lst = bitra_cloud.call(method=method, params=params)
-            if not cloud_comments_lst.get('result'):
+            if cloud_comments_lst.get('result') is None:
                 logger.error(f'Не удалось получить список комментариев для задачи '
                              f'с task_id_cloud=={i_task.task_id_cloud}. '
                              f'Команда будет остановлена!\n'
@@ -87,8 +87,10 @@ class Command(BaseCommand):
                 if not box_comment_creation_rslt.get('result'):
                     logger.error(f'Неудачный запрос для создания коммента в коробке. '
                                  f'Команда будет остановлена!\n'
-                                 f'Запрос: {method}|{params}\nОтвет: {cloud_comments_lst}')
-                    raise CommandError
+                                 f'Запрос: {method}|{params}\nОтвет: {box_comment_creation_rslt}')
+                    input('CTRL+C -- прекратить выполнение команды | ENTER -- пропустить')
+                    continue
+                    # raise CommandError
 
                 # Создаём в БД запись о новом комменте
                 comment_in_db = TaskComment.objects.update_or_create(
@@ -103,5 +105,5 @@ class Command(BaseCommand):
                     }
                 )
                 logger.success(f'Комментарий {"создан" if comment_in_db[1] else "обновлён"} в БД!')
-                logger.info(f'Пауза между обработкой комментариев 1 секунды.')
-                time.sleep(1)
+                # logger.info(f'Пауза между обработкой комментариев 0.5 секунды.')
+                # time.sleep(0.5)

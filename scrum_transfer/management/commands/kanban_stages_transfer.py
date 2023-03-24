@@ -48,12 +48,12 @@ class Command(BaseCommand):
                 'sprintId': i_sprint.sprint_id_cloud,
             }
             kanban_stages = bitra_cloud.call(method, params)
-            if not kanban_stages.get('result'):
+            if kanban_stages.get('result') is None:
                 logger.error(f'Неудачный запрос для получения стадий канбана '
                              f'для спринта cloud_id == {i_sprint.sprint_id_cloud}.'
                              f'Запрос: {method}|{params}\nОтвет: {kanban_stages}')
                 raise CommandError
-            input(f'СТАДИИ КАНБАНА: {kanban_stages}')
+
             for j_numb, j_stage in enumerate(kanban_stages.get('result')):
                 logger.info(f'\tОбработка стадии канбана № {j_numb + 1} | {j_stage.get("name")}')
 
@@ -80,7 +80,7 @@ class Command(BaseCommand):
                                  f'для спринта box_id == {i_sprint.sprint_id_box}.'
                                  f'Запрос: {method}|{params}\nОтвет: {kanban_stages}')
                     raise CommandError
-                input(f'СОЗДАНИЕ В КОРОБКЕ СТАДИИ КАНБАНА: {kanban_stage_box}')
+
                 # Записываем данные о стадии канбана в БД
                 kanban_write_rslt = KanbanStages.objects.update_or_create(
                     stages_id_cloud=j_stage.get('id'),
@@ -93,33 +93,36 @@ class Command(BaseCommand):
                 )
                 logger.success(f'\tУспешное {"создание" if kanban_write_rslt[1] else "обновлени"} стадии канбана в БД')
 
-                # Добавляем задачи в стадию канбана
-                kanban_stage_tasks = ScrumTask.objects.filter(stage_id_cloud=j_stage.get('id'))
-                for k_numb, k_task in enumerate(kanban_stage_tasks):
-                    logger.info(f'\t\tДобавление задачи № {k_numb + 1} в стадию {j_stage.get("name")}')
+        # Добавляем задачи в стадию канбана
+        all_stages = KanbanStages.objects.all()
+        for i_stage in all_stages:
 
-                    # Проверка, что задача ранее была добавлена в стадию
-                    if k_task.stage_id_box:
-                        logger.info(f'\t\tЗадача уже была добавлена в стадию канбана. Пропускаем её.')
-                        continue
+            kanban_stage_tasks = ScrumTask.objects.filter(stage_id_cloud=i_stage.stages_id_cloud)
+            for j_numb, j_task in enumerate(kanban_stage_tasks):
+                logger.info(f'\t\tДобавление задачи № {j_numb + 1} в стадию STAGES_BOX_ID == {i_stage.stages_id_box}')
 
-                    method = 'tasks.api.scrum.kanban.addTask'
-                    params = {
-                        'sprintId': i_sprint.sprint_id_box,
-                        'taskId': k_task.task_id_box,
-                        'stageId': kanban_stage_box.get('result'),
-                    }
-                    task_in_kanban_stage = bitra_box.call(method, params)
-                    if not task_in_kanban_stage.get('result'):
-                        logger.error(f'Неудачный запрос для добавления задачи в стадию канбана в коробке '
-                                     f'для спринта с box_id == {i_sprint.sprint_id_box}.'
-                                     f'Запрос: {method}|{params}\nОтвет: {kanban_stages}')
-                        raise CommandError
-                    input(f'ДОБАВЛЕНИЕ ЗАДАЧИ В СТАДИЮ КАНБАНА: {task_in_kanban_stage}')
-                    # Обновляем задачу в БД
-                    k_task.stage_id_box = kanban_stage_box.get('result')
-                    k_task.save()
-                    logger.success(f'Успешное обновление stage_id_box задачи в БД')
+                # Проверка, что задача ранее была добавлена в стадию
+                if j_task.stage_id_box:
+                    logger.info(f'\t\tЗадача уже была добавлена в стадию канбана. Пропускаем её.')
+                    continue
+
+                method = 'tasks.api.scrum.kanban.addTask'
+                params = {
+                    'sprintId': i_stage.sprint_id_box,
+                    'taskId': j_task.task_id_box,
+                    'stageId': i_stage.stages_id_box,
+                }
+                task_in_kanban_stage = bitra_box.call(method, params)
+                if not task_in_kanban_stage.get('result'):
+                    logger.error(f'Неудачный запрос для добавления задачи в стадию канбана в коробке '
+                                 f'для спринта с box_id == {i_stage.sprint_id_box}.'
+                                 f'Запрос: {method}|{params}\nОтвет: {task_in_kanban_stage}')
+                    input('CTRL+C -- остановить команду, ENTER -- пропустить добавление задачи')
+
+                # Обновляем задачу в БД
+                j_task.stage_id_box = i_stage.stages_id_box
+                j_task.save()
+                logger.success(f'Успешное обновление stage_id_box задачи в БД')
 
 
 

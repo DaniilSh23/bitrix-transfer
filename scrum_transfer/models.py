@@ -25,12 +25,13 @@ class Scrums(models.Model):
     Дополнительно указаны и другие поля.
     """
     scrum_cloud_id = models.CharField(verbose_name='ID скрама в облаке', max_length=20)
-    scrum_box_id = models.CharField(verbose_name='ID скрама в коробке', max_length=20)
+    scrum_box_id = models.CharField(verbose_name='ID скрама в коробке', max_length=20, blank=True, null=True)
     scrum_title = models.CharField(verbose_name='Название скрама', max_length=200)
     scrum_master_id_cloud = models.CharField(verbose_name='ID скрам-мастера в облаке', max_length=100,
                                              blank=True, null=False)
     scrum_master_id_box = models.CharField(verbose_name='ID скрам-мастера в коробке', max_length=100,
                                            blank=True, null=False)
+    is_archived = models.BooleanField(verbose_name='В архиве', default=False)
 
     class Meta:
         ordering = ['-id']
@@ -112,7 +113,7 @@ class ScrumTask(models.Model):
     scrum_box_id = models.CharField(verbose_name='ID скрама в коробке', max_length=20, blank=True, null=False)
     stage_id_cloud = models.CharField(verbose_name='ID стадии задачи в облаке', max_length=20, blank=True, null=False)
     stage_id_box = models.CharField(verbose_name='ID стадии задачи в коробке', max_length=20, blank=True, null=False)
-    comments_count = models.IntegerField(verbose_name='Кол-во комментов', default=0)
+    comments_count = models.IntegerField(verbose_name='Кол-во комментов', default=0, null=True)
 
     class Meta:
         ordering = ['-id']
@@ -143,8 +144,8 @@ class KanbanStages(models.Model):
     """
     sprint_id_cloud = models.CharField(verbose_name='ID спринта в облаке', max_length=20, blank=True, null=False)
     sprint_id_box = models.CharField(verbose_name='ID спринта в коробке', max_length=20, blank=True, null=False)
-    stages_id_cloud = models.CharField(verbose_name='ID стадий через пробел облако', max_length=250, blank=True, null=False)
-    stages_id_box = models.CharField(verbose_name='ID стадий через пробел коробка', max_length=250, blank=True, null=False)
+    stages_id_cloud = models.CharField(verbose_name='ID стадии облако', max_length=250, blank=True, null=False)
+    stages_id_box = models.CharField(verbose_name='ID стадии коробка', max_length=250, blank=True, null=False)
 
     class Meta:
         ordering = ['-id']
